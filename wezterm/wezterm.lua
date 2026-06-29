@@ -11,49 +11,66 @@ local paths = {
 local config = wezterm.config_builder()
 
 local function tab_title(tab_info)
+  local cwd = tab_info.active_pane.current_working_dir
+  if cwd then
+    local path = type(cwd) == "userdata" and cwd.file_path or tostring(cwd)
+    path = path:gsub("[/\\]+$", "")
+    local basename = path:match("[/\\]([^/\\]+)$")
+    if basename then return basename end
+  end
   local title = tab_info.tab_title
   if title and #title > 0 then return title end
   return tab_info.active_pane.title
 end
 
 wezterm.on("format-tab-title", function(tab, tabs, panes, cfg, hover, max_width)
-  local LEFT  = wezterm.nerdfonts.pl_right_hard_divider
-  local RIGHT = wezterm.nerdfonts.pl_left_hard_divider
-  local bar   = "#232136"
   local bg, fg
   if tab.is_active then
-    bg, fg = "#c4a7e7", "#232136"
+    bg, fg = "rgba(196, 167, 231, 0.55)", "#e0def4"
   elseif hover then
-    bg, fg = "#393552", "#908caa"
+    bg, fg = "rgba(57, 53, 82, 0.55)", "#908caa"
   else
-    bg, fg = "#2a273f", "#6e6a86"
+    bg, fg = "rgba(42, 39, 63, 0.45)", "#6e6a86"
   end
   local title = tab_title(tab)
   local index = tab.tab_index + 1
+  local L = wezterm.nerdfonts.ple_left_half_circle_thick
+  local R = wezterm.nerdfonts.ple_right_half_circle_thick
   return {
-    { Background = { Color = bar } }, { Foreground = { Color = bg } }, { Text = LEFT },
-    { Background = { Color = bg  } }, { Foreground = { Color = fg } }, { Text = " " .. index .. ": " .. title .. " " },
-    { Background = { Color = bar } }, { Foreground = { Color = bg } }, { Text = RIGHT },
+    { Background = { Color = "rgba(0,0,0,0)" } }, { Text = "  " },
+    { Background = { Color = "rgba(0,0,0,0)" } }, { Foreground = { Color = bg } }, { Text = L },
+    { Background = { Color = bg } }, { Foreground = { Color = fg } }, { Text = "    " .. index .. ": " .. title .. "    " },
+    { Background = { Color = "rgba(0,0,0,0)" } }, { Foreground = { Color = bg } }, { Text = R },
+    { Background = { Color = "rgba(0,0,0,0)" } }, { Text = "  " },
   }
 end)
 
 config.automatically_reload_config = true
 config.enable_tab_bar = true
 config.window_close_confirmation = "NeverPrompt"
-config.window_decorations = "RESIZE"
+config.window_decorations = "INTEGRATED_BUTTONS|RESIZE"
 config.default_cursor_style = "BlinkingBar"
 config.color_scheme = "rose-pine-moon"
 config.max_fps = 120
 config.font = wezterm.font("Hack Nerd Font", { weight = "Regular" })
 config.window_frame = {
 	font = wezterm.font("Hack Nerd Font", { weight = "Bold" }),
+	active_titlebar_bg = "rgba(0, 0, 0, 0)",
+	inactive_titlebar_bg = "rgba(0, 0, 0, 0)",
 }
-config.use_fancy_tab_bar = false
+config.window_padding = {
+  left = 16,
+  right = 8,
+  top = 8,
+  bottom = 8
+}
+config.use_fancy_tab_bar = true
+config.tab_max_width = 40
 config.colors = {
   tab_bar = {
-    background = "#232136",
-    new_tab       = { bg_color = "#232136", fg_color = "#6e6a86" },
-    new_tab_hover = { bg_color = "#2a273f", fg_color = "#908caa" },
+    background = "rgba(0, 0, 0, 0)",
+    new_tab       = { bg_color = "rgba(0, 0, 0, 0)", fg_color = "#6e6a86" },
+    new_tab_hover = { bg_color = "rgba(42, 39, 63, 0.6)", fg_color = "#908caa" },
   },
 }
 
@@ -86,22 +103,22 @@ config.keys = {
   { key = 'w', mods = 'CTRL|SHIFT', action = wezterm.action.CloseCurrentPane { confirm = false } },
   {
     key = "h",
-    mods = "CTRL|SHIFT",
+    mods = "CTRL",
     action = wezterm.action.ActivateTabRelative(-1),
   },
   {
     key = "l",
-    mods = "CTRL|SHIFT",
+    mods = "CTRL",
     action = wezterm.action.ActivateTabRelative(1),
   },
   {
     key = "j",
-    mods = "CTRL|SHIFT",
+    mods = "CTRL",
     action = wezterm.action.ActivatePaneDirection("Left"),
   },
   {
     key = "k",
-    mods = "CTRL|SHIFT",
+    mods = "CTRL",
     action = wezterm.action.ActivatePaneDirection("Right"),
   },
   { key = "1", mods = "CTRL|ALT", action = wezterm.action.SendString("cd " .. paths[1] .. "\r") },

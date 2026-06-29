@@ -10,6 +10,7 @@ if not vim.loop.fs_stat(lazypath) then
     "--branch=stable", lazypath,
   })
 end
+
 vim.opt.rtp:prepend(lazypath)
 vim.opt.number = true
 vim.opt.relativenumber = true
@@ -24,14 +25,16 @@ vim.opt.clipboard = "unnamedplus"
 vim.opt.updatetime = 250
 vim.opt.cursorline = true
 vim.opt.termguicolors = true
+vim.opt.shortmess:remove("S")
 
 -- Keybindings
 vim.keymap.set({ "n", "i" }, "<C-s>", "<cmd>w<cr>", { desc = "Save" })
-vim.keymap.set("n", "<C-h>", "<C-w>h", { desc = "Window left" })
-vim.keymap.set("n", "<C-l>", "<C-w>l", { desc = "Window right" })
-vim.keymap.set("n", "<C-j>", "<C-w>j", { desc = "Window down" })
-vim.keymap.set("n", "<C-k>", "<C-w>k", { desc = "Window up" })
+vim.keymap.set("n", "<leader>h", "<C-w>h", { desc = "Window left" })
+vim.keymap.set("n", "<leader>l", "<C-w>l", { desc = "Window right" })
+vim.keymap.set("n", "<leader>j", "<C-w>j", { desc = "Window down" })
+vim.keymap.set("n", "<leader>k", "<C-w>k", { desc = "Window up" })
 vim.keymap.set("n", "<leader>q", "<cmd>bd<cr>", { desc = "Close buffer" })
+vim.keymap.set("n", "<Esc>", "<cmd>noh<cr>", { desc = "Clear search highlight" })
 
 -- Load plugins
 require("lazy").setup("plugins")
