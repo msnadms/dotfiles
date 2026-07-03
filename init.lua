@@ -26,6 +26,7 @@ vim.opt.updatetime = 250
 vim.opt.cursorline = true
 vim.opt.termguicolors = true
 vim.opt.shortmess:remove("S")
+vim.opt.wrap = false
 
 -- Keybindings
 vim.keymap.set({ "n", "i" }, "<C-s>", "<cmd>w<cr>", { desc = "Save" })
